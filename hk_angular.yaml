@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: angular
+  name: angular
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: angular
+  template:
+    metadata:
+      labels:
+        run: angular
+    spec:
+      containers:
+      - image: vergeops/k8s-rvstore-ui:1.0
+        name: angular
+        ports:
+        - containerPort: 80
+        resources: {}

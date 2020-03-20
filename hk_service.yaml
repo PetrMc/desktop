@@ -1,0 +1,61 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rvstore-api-gateway
+spec:
+  selector:
+    run: api-gateway 
+  ports:
+  - protocol: TCP
+    port: 9000
+    nodePort: 30081
+  type: NodePort
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: store-service
+spec:
+  selector:
+    run: angular 
+  ports:
+  - protocol: TCP
+    port: 80
+    nodePort: 30080
+  type: NodePort
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rvstore-product-api
+spec:
+  selector:
+    run: product 
+  ports:
+  - protocol: TCP
+    port: 9001 
+    targetPort: 9001
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rvstore-order-api
+spec:
+  selector:
+    run: order 
+  ports:
+  - protocol: TCP
+    port: 9002
+    targetPort: 9002
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rvstore-orders-mongodb
+spec:
+  selector:
+    run: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017

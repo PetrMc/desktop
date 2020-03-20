@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: mongodb
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       run: mongodb
+  template:
+    metadata:
+      labels:
+         run: mongodb
+    spec:
+      initContainers:
+      - name: create-file
+        image: busybox:1.28
+        command: ['sh', '-c', "touch /data/probe.txt"]
+        volumeMounts:
+        - mountPath: /data/
+          name: data-db
+      containers:
+      - image: mongo
+        name: mongodb
+        volumeMounts:
+        - mountPath: /data/db
+          name: data-db
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: password
+        livenessProbe:
+          exec:
+           command:
+           - ls
+           - /data/db/probe.txt
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        ports:
+        - containerPort: 27017
+      volumes:
+      - name: data-db
+        hostPath:
+          path: /data
+          type: DirectoryOrCreate
